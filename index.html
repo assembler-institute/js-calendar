@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Js-Calendar</title>
+    <link rel="stylesheet" href="./index.css" />
+    <script src="./utils.js" defer></script>
+    <script src="./events.js" defer></script>
+    <script src="./forms.js" defer></script>
+    <script src="./modals.js" defer></script>
+    <script src="./nav.js" defer></script>
+    <script src="./thread.js" defer></script>
+    <script src="./index.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+      integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="h1">CALENDAR</h1>
+      <div class="btn-add">
+        <button class="open-modal" data-open="addModal" id="openModalCreation">
+          +
+        </button>
+      </div>
+    </header>
+
+    <div class="skeleton">
+      <article class="calendar">
+        <div class="display" id="display">
+          <button id="previousMonth" class="previous-btn">&lt;</button>
+          <div class="month-display" id="monthDisplay"></div>
+          <button id="nextMonth" class="next-btn">&gt;</button>
+        </div>
+        <div class="weekdays">
+          <div class="weekday">Sunday</div>
+          <div class="weekday">Monday</div>
+          <div class="weekday">Tuesday</div>
+          <div class="weekday">Wednesday</div>
+          <div class="weekday">Thursday</div>
+          <div class="weekday">Friday</div>
+          <div class="weekday">Saturday</div>
+        </div>
+        <div class="months" id="months"></div>
+
+        <!-- MODAL EVENTS -->
+        <div class="modal" id="eventModal">
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="titleEvent"></h3>
+              <button
+                class="modal-close"
+                aria-label="close eventModal"
+                data-close="eventModal"
+              >
+                ✕
+              </button>
+            </header>
+            <section class="modal-content" id="modalContent">
+              <form id="formEvent" class="form">
+                <div class="form-data">
+                  <p>Initial date</p>
+                  <p id="startDate"></p>
+                </div>
+                <div class="form-data">
+                  <p>End date</p>
+                  <p id="finalDate"></p>
+                </div>
+                <div class="form-data">
+                  <p>Time to remind</p>
+                  <p id="timeEvent"></p>
+                </div>
+                <div class="form-data">
+                  <p>Description</p>
+                  <p id="descriptionEvent"></p>
+                </div>
+                <div class="form-data">
+                  <p>Type</p>
+                  <p id="typeEvent"></p>
+                </div>
+                <input id="idEvent" type="hidden" name="idEvent" />
+                <input id="initEventDate" type="hidden" name="eventInit" />
+                <input id="endEventDate" type="hidden" name="eventEnd" />
+              </form>
+            </section>
+            <footer class="modal-footer">
+              <button type="submit" form="formEvent" class="btn-del">
+                Delete
+              </button>
+              <button class="btn-cancel" data-close="eventModal">
+                Cancel
+              </button>
+            </footer>
+          </div>
+        </div>
+        <!-- MODAL CREATION -->
+        <div class="modal" id="addModal">
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3>NEW EVENT</h3>
+              <button
+                class="modal-close"
+                aria-label="close addModal"
+                data-close="addModal"
+              >
+                ✕
+              </button>
+            </header>
+            <section class="modal-content">
+              <form class="form" id="form" name="form">
+                <div class="form-data">
+                  <div class="div-label">
+                    <label for="title">Title: *</label>
+                  </div>
+                  <div class="div-input">
+                    <input
+                      type="text"
+                      name="title"
+                      id="title"
+                      required
+                      maxlength="60"
+                    />
+                  </div>
+                </div>
+                <div class="form-data">
+                  <div class="div-label">
+                    <label for="initDate">Initial date: *</label>
+                  </div>
+                  <div class="div-input">
+                    <input type="date" name="initDate" id="initDate" required />
+                  </div>
+                </div>
+                <div class="form-data">
+                  <div class="div-label">
+                    <label for="initTime">Initial time: *</label>
+                  </div>
+                  <div class="div-input">
+                    <input type="time" name="initTime" id="initTime" required />
+                  </div>
+                </div>
+                <div class="form-data">
+                  <input
+                    type="checkbox"
+                    name="existEndDate"
+                    id="existEndDate"
+                  />
+                  <label for="existEndDate">End date</label>
+                </div>
+                <div class="form-data" id="showEndDate">
+                  <div class="form-data">
+                    <div class="div-label">
+                      <label for="endDate">End date: *</label>
+                    </div>
+                    <div class="div-input">
+                      <input type="date" name="endDate" id="endDate" />
+                    </div>
+                  </div>
+                  <div class="form-data">
+                    <div class="div-label">
+                      <label for="endTime">End time: *</label>
+                    </div>
+                    <div class="div-input">
+                      <input type="time" name="endTime" id="endTime" />
+                    </div>
+                  </div>
+                </div>
+                <div id="showExpiration" class="form-data">
+                  <div class="form-data">
+                    <input type="checkbox" name="expiration" id="expiration" />
+                    <label for="expiration"
+                      >Remid me when this event expires</label
+                    >
+                  </div>
+                  <div class="form-data" id="previousTime">
+                    <div class="div-label">
+                      <label for="time">Time: *</label>
+                    </div>
+                    <div class="div-input">
+                      <select name="time" id="time">
+                        <option value="" selected>Choose time</option>
+                        <option value="5">5 min</option>
+                        <option value="10">10 min</option>
+                        <option value="15">15 min</option>
+                        <option value="30">30 min</option>
+                        <option value="60">1 hour</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-data">
+                  <div class="div-label">
+                    <label for="description">Description:</label>
+                  </div>
+                  <div class="div-input">
+                    <textarea
+                      name="description"
+                      id="description"
+                      maxlength="500"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="form-data">
+                  <div class="div-label">
+                    <label for="type">Event type:</label>
+                  </div>
+                  <div class="div-input">
+                    <select name="type" id="type">
+                      <option value="" selected></option>
+                      <option value="meeting">Meeting</option>
+                      <option value="personal">Personal</option>
+                      <option value="study">Study</option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </section>
+            <footer class="modal-footer">
+              <button type="submit" form="form" class="btn-save">Add</button>
+              <button class="btn-cancel" data-close="addModal">Cancel</button>
+            </footer>
+          </div>
+        </div>
+        <!-- ALERT REMIND -->
+        <div class="modal" id="remindAlert">
+          <div class="alert-dialog">
+            <header class="alert-header">
+                    <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-exclamation-triangle-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+                />
+              </svg>
+              <h3>REMEMBER</h3>
+              <button
+                class="alert-close"
+                aria-label="close remindAlert"
+                data-close="remindAlert"
+              >
+                ✕
+              </button>
+            </header>
+            <section class="alert-content" id="remindAlertContent"></section>
+          </div>
+        </div>
+        <!-- ALERT END -->
+        <div class="modal" id="endAlert">
+          <div class="error-dialog alert-end">
+            <header class="error-header">
+                    <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-exclamation-triangle-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+                />
+              </svg>
+              <h3>ATTENTION</h3>
+              <button
+                class="error-close"
+                aria-label="error endAlert"
+                data-close="endAlert"
+              >
+                ✕
+              </button>
+            </header>
+            <section class="error-content" id="endAlertContent"></section>
+          </div>
+        </div>
+
+        <!-- ERRORS -->
+        <div class="modal" id="error">
+          <div class="error-dialog">
+            <header class="error-header">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-exclamation-triangle-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+                />
+              </svg>
+              <h3>ERROR!</h3>
+              <button
+                class="error-close alert"
+                aria-label="close error"
+                data-close="error"
+              >
+                ✕
+              </button>
+            </header>
+            <section class="error-content" id="errorContent"></section>
+          </div>
+        </div>
+      </article>
+    </div>
+  </body>
+</html>
